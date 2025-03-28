@@ -1,6 +1,7 @@
 import sqlite3
+from config import Config
 
-conn = sqlite3.connect("clients.db")
+conn = sqlite3.connect(Config.DATABASE_PATH)
 cursor = conn.cursor()
 
 # Create clients table
@@ -32,4 +33,4 @@ cursor.execute("INSERT OR IGNORE INTO templates (name, subject, body) VALUES (?,
 
 conn.commit()
 conn.close()
-print("Database initialized.")
+print(f"Database initialized at {Config.DATABASE_PATH}.")

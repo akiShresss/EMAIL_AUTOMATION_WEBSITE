@@ -16,6 +16,7 @@ app.secret_key = Config.SECRET_KEY
 # Load configuration
 ALLOWED_EMAILS = Config.ALLOWED_EMAILS
 SIGNATURE_PATHS = Config.SIGNATURE_PATHS
+DATABASE_PATH = Config.DATABASE_PATH
 
 # OTP storage (in-memory for simplicity, consider database storage for production)
 otp_store = {}
@@ -33,7 +34,7 @@ def load_signature(account):
     return ""
 
 def get_all_clients():
-    conn = sqlite3.connect("clients.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, email FROM clients")
     clients = cursor.fetchall()
@@ -41,7 +42,7 @@ def get_all_clients():
     return clients
 
 def get_all_templates():
-    conn = sqlite3.connect("clients.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, subject, body FROM templates")
     templates = cursor.fetchall()
@@ -223,7 +224,7 @@ def send_email():
     acc_info = credentials[account]
     signature_html = load_signature(account)
 
-    conn = sqlite3.connect("clients.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     placeholders = ",".join("?" for _ in selected_emails)
     cursor.execute(f"SELECT name, email FROM clients WHERE email IN ({placeholders})", selected_emails)
@@ -311,7 +312,7 @@ def add_client():
         flash("Name and email are required.", "error")
     else:
         try:
-            conn = sqlite3.connect("clients.db")
+            conn = sqlite3.connect(DATABASE_PATH)
             cursor = conn.cursor()
             cursor.execute("INSERT INTO clients (name, email) VALUES (?, ?)", (name, email))
             conn.commit()
@@ -328,7 +329,7 @@ def delete_client(client_id):
         flash("Please login to access this page.", "error")
         return redirect(url_for('login'))
         
-    conn = sqlite3.connect("clients.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM clients WHERE id = ?", (client_id,))
     conn.commit()
@@ -349,7 +350,7 @@ def edit_client(client_id):
         flash("Name and email are required.", "error")
     else:
         try:
-            conn = sqlite3.connect("clients.db")
+            conn = sqlite3.connect(DATABASE_PATH)
             cursor = conn.cursor()
             cursor.execute("UPDATE clients SET name = ?, email = ? WHERE id = ?", (name, email, client_id))
             conn.commit()
@@ -382,7 +383,7 @@ def add_template():
     if not name or not subject or not body:
         flash("All fields are required.", "error")
     else:
-        conn = sqlite3.connect("clients.db")
+        conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO templates (name, subject, body) VALUES (?, ?, ?)", (name, subject, body))
         conn.commit()
@@ -397,7 +398,7 @@ def delete_template(template_id):
         flash("Please login to access this page.", "error")
         return redirect(url_for('login'))
         
-    conn = sqlite3.connect("clients.db")
+    conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM templates WHERE id = ?", (template_id,))
     conn.commit()
@@ -418,7 +419,7 @@ def edit_template(template_id):
     if not name or not subject or not body:
         flash("All fields are required.", "error")
     else:
-        conn = sqlite3.connect("clients.db")
+        conn = sqlite3.connect(DATABASE_PATH)
         cursor = conn.cursor()
         cursor.execute("UPDATE templates SET name = ?, subject = ?, body = ? WHERE id = ?", (name, subject, body, template_id))
         conn.commit()

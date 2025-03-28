@@ -6,7 +6,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key')
     
     # Database configuration
-    DATABASE_PATH = os.environ.get('DATABASE_PATH', 'clients.db')
+    DATABASE_PATH = os.path.join('/data', 'clients.db') if os.path.exists('/data') else 'clients.db'
     
     # Email configuration
     ALLOWED_EMAILS = ["marketing@homeschool.asia", "marketing@kungfuquiz.com"]
