@@ -63,6 +63,8 @@ def send_otp_email(email, otp):
     account = "hsa" if "homeschool.asia" in email else "kfq"
     acc_info = credentials[account]
     
+    print(f"Attempting to send OTP to {email} using {account} account: {acc_info['email']}")
+    
     msg = EmailMessage()
     msg["Subject"] = "Your OTP for MST Email Automation"
     msg["From"] = f'{acc_info["display_name"]} <{acc_info["email"]}>'
@@ -97,13 +99,20 @@ def send_otp_email(email, otp):
     msg.add_alternative(body_html, subtype="html")
     
     try:
+        print(f"Connecting to SMTP server: {acc_info['smtp_server']}:{acc_info['smtp_port']}")
         with smtplib.SMTP(acc_info["smtp_server"], acc_info["smtp_port"]) as server:
+            print("Starting TLS")
             server.starttls()
+            print(f"Logging in with email: {acc_info['email']}")
             server.login(acc_info["email"], acc_info["password"])
+            print("Sending message")
             server.send_message(msg)
+            print("Message sent successfully")
         return True
     except Exception as e:
-        print(f"Failed to send OTP to {email}: {e}")
+        print(f"Failed to send OTP to {email}: {str(e)}")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Account info used: {acc_info['email']} (password hidden)")
         return False
 
 @app.route('/login', methods=['GET', 'POST'])
