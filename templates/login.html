@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logos">
+                <img src="{{ url_for('static', filename='images/HSA.png') }}" alt="HSA Logo" class="login-logo">
+                <img src="{{ url_for('static', filename='images/panda.png') }}" alt="KFQ Logo" class="login-logo">
+            </div>
+            <h2>MST Email Automation</h2>
+        </div>
+        
+        <div class="login-body">
+            <form action="{{ url_for('login') }}" method="post">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" required placeholder="Enter your email">
+                    <div class="form-help">
+                        <i class="fas fa-info-circle"></i> Use marketing@homeschool.asia or marketing@kungfuquiz.com
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

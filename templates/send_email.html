@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Send Email</h1>
+
+<!-- Email Sending Form -->
+<form id="email-form" action="/send" method="post">
+    <div class="two-column-layout">
+        <div class="column-left">
+            <!-- Recipients Section -->
+            <div class="form-section recipients-section">
+                <div class="form-section-header">
+                    <i class="fas fa-users"></i> Recipients
+                </div>
+                
+                <div class="recipients-header">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="select-all">
+                        <span class="checkmark"></span>
+                        <label for="select-all"><span id="selected-count">0 of {{ clients|length }} selected</span></label>
+                    </div>
+                    
+                    <div class="recipients-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-recipients" class="form-control" placeholder="Search recipients...">
+                    </div>
+                </div>
+                
+                <div class="recipients-alphabet" id="recipients-alphabet">
+                    <!-- Alphabet letters will be added by JavaScript -->
+                </div>
+                
+                <div class="recipients-container" id="recipients-list">
+                    <div class="recipients-grid">
+                        {% for client in clients %}
+                        <div class="recipient-card">
+                            <div class="recipient-avatar">
+                                {{ client[1][:1] }}
+                            </div>
+                            <div class="recipient-info">
+                                <div class="recipient-name">{{ client[1] }}</div>
+                                <div class="recipient-email">{{ client[2] }}</div>
+                            </div>
+                            <label class="checkbox-container recipient-checkbox">
+                                <input type="checkbox" name="recipients" value="{{ client[2] }}">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <button type="button" id="recipients-collapse" class="recipients-collapse-btn">
+                    Collapse <i class="fas fa-chevron-up"></i>
+                </button>
+                
+                <div class="recipients-summary">
+                    <div class="recipients-tags" id="selected-tags">
+                        <!-- Selected recipient tags will be added by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email Composition Section -->
+            <div class="form-section">
+                <div class="form-section-header">
+                    <i class="fas fa-envelope"></i> Compose Email
+                </div>
+                
+                <!-- Template Dropdown -->
+                <div class="form-group">
+                    <label for="template" class="form-label">Load Template:</label>
+                    <div class="select-wrapper">
+                        <select id="template" class="form-control">
+                            <option value="">-- Select Template --</option>
+                            {% for template in templates %}
+                                <option value="{{ template[2] }}|||{{ template[3] }}">{{ template[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Subject -->
+                <div class="form-group">
+                    <label for="subject" class="form-label">Subject:</label>
+                    <input type="text" id="subject" name="subject" class="form-control" required>
+                </div>
+                
+                <!-- Body -->
+                <div class="form-group">
+                    <label for="body" class="form-label">Body:</label>
+                    <textarea id="body" name="body" class="form-control" rows="10" required></textarea>
+                    <div class="form-help">
+                        <i class="fas fa-info-circle"></i> Use {name} to personalize with recipient's name
+                    </div>
+                    <div class="form-help">
+                        <i class="fas fa-info-circle"></i> Use [text]{url} for clickable links
+                    </div>
+                </div>
+                
+                <!-- Send Type -->
+                <div class="form-group">
+                    <label class="form-label">Send Type:</label>
+                    <div class="d-flex align-center">
+                        <label class="radio-container">
+                            <input type="radio" id="to" name="send_type" value="to" checked>
+                            <span class="radiomark"></span>
+                            To
+                        </label>
+                        <label class="radio-container" style="margin-left: 20px;">
+                            <input type="radio" id="bcc" name="send_type" value="bcc">
+                            <span class="radiomark"></span>
+                            BCC
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Send Buttons -->
+            <div class="send-buttons">
+                <button type="submit" name="account" value="hsa" class="send-btn">
+                    <img src="{{ url_for('static', filename='images/HSA.png') }}" alt="HSA" class="send-btn-logo">
+                    Send as HSA
+                </button>
+                <button type="submit" name="account" value="kfq" class="send-btn">
+                    <img src="{{ url_for('static', filename='images/panda.png') }}" alt="KFQ" class="send-btn-logo">
+                    Send as KFQ
+                </button>
+            </div>
+        </div>
+        
+        <div class="column-right">
+            <!-- Email Preview -->
+            <div class="email-preview">
+                <div class="email-preview-header">
+                    <div class="email-preview-title">
+                        <i class="fas fa-eye"></i> Email Preview
+                    </div>
+                </div>
+                
+                <div id="preview-to" class="mb-3">No recipients selected</div>
+                
+                <div id="preview-subject" class="email-preview-subject">Your email subject</div>
+                
+                <div id="preview-body" class="email-preview-body">
+                    Your email content will appear here...
+                </div>
+                
+                <div id="preview-signature" class="email-preview-signature"></div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
